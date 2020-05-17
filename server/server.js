@@ -8,7 +8,6 @@ const centerServer = ws.createServer(conn => {
     console.log('开启连接', code)
   })
   conn.on("text", str => {
-    console.log(str)
     let data
     try {
       data = JSON.parse(str)
@@ -16,6 +15,8 @@ const centerServer = ws.createServer(conn => {
       console.log('不合法的數據')
     }
     if (data.type === 'linkIn') {
+      console.log(conn.headers.host)
+      console.log(conn.headers.origin)
       conn.uid = data.uid
     }
     // 分發給多用戶
@@ -48,10 +49,10 @@ const centerServer = ws.createServer(conn => {
     }
   })
   conn.on("close", (code, reason) => {
-    console.log("用户关闭连接")
+    console.log(`用户关闭連接:${conn.uid}`)
   });
   conn.on("error", (code, reason) => {
-    console.log("异常关闭")
+    console.log(`用户关闭連接:${conn.uid}`)
   });
 }).listen(11881)
 

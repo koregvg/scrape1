@@ -90,4 +90,4 @@ const findConn = (server, uid) => {
 const showConnections = (server, info) => {
   console.log(server.connections)
 }
-console.log('This websocket-server is running at localhost:' + 8889)
+console.log('This websocket-server is running at localhost:' + 8080)

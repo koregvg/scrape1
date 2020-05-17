@@ -5,7 +5,6 @@
   "author": "wangpai <wangpai@baidu.com>",
   "private": true,
   "scripts": {
-    "start": "node puppeteer.js",
     "server": "node ./server/server.js"
   },
   "dependencies": {

@@ -15,7 +15,8 @@
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^8.0.8",
     "koa-static": "^5.0.0",
-    "nodejs-websocket": "^1.7.2"
+    "nodejs-websocket": "^1.7.2",
+    "ws": "^7.3.0"
   },
   "devDependencies": {},
   "engines": {

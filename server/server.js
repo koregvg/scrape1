@@ -52,7 +52,7 @@ const centerServer = ws.createServer(conn => {
   conn.on("error", (code, reason) => {
     console.log("异常关闭")
   });
-}).listen(8889)
+}).listen(8080)
 
 // 分发方法
 const broadcast = (server, data) => {

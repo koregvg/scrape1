@@ -95,10 +95,6 @@
 // console.log('This websocket-server is running at localhost:' + 11881)
 
 
-
-
-
-
 // const WebSocket = require("ws");
 //
 // const wss = new WebSocket.Server({
@@ -113,24 +109,33 @@
 //
 // console.log('This websocket-server is running at localhost:' + 11881)
 
-var dgram = require('dgram');
+const dgram = require('dgram');
 //创建 udp server
-var udp_server = dgram.createSocket('udp4');
+
+const udp_server = dgram.createSocket('udp4');
 udp_server.bind(11881); // 绑定端口
 
+let users = {}
+
 // 监听端口
-udp_server.on('listening', function () {
+udp_server.on('listening', () => {
   console.log('udp server linstening 11881.');
 })
 
 //接收消息
-udp_server.on('message', function (msg, rinfo) {
-  strmsg = msg.toString();
-  udp_server.send(strmsg, 0, strmsg.length, rinfo.port, rinfo.address); //将接收到的消息返回给客户端
-  console.log(`udp server received data: ${strmsg} from ${rinfo.address}:${rinfo.port}`)
+udp_server.on('message', (msg, rinfo) => {
+  let rmsg = JSON.parse(msg)
+  if(rmsg.type === 'linkIn') {
+    users[`${rinfo.address}:${rinfo.port}`] = true
+  }
+  if(rmsg.type === 'ping') {
+    users[`${rinfo.address}:${rinfo.port}`] = true
+  }
+  udp_server.send(msg, rinfo.port, rinfo.address); //将接收到的消息返回给客户端
+  console.log(`udp server received data: ${msg} from ${rinfo.address}:${rinfo.port}`)
 })
 //错误处理
-udp_server.on('error', function (err) {
+udp_server.on('error', err => {
   console.log('some error on udp server.')
   udp_server.close();
 })

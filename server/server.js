@@ -8,6 +8,7 @@ const centerServer = ws.createServer(conn => {
     console.log('开启连接', code)
   })
   conn.on("text", str => {
+    console.log(str)
     let data
     try {
       data = JSON.parse(str)
@@ -52,7 +53,7 @@ const centerServer = ws.createServer(conn => {
   conn.on("error", (code, reason) => {
     console.log("异常关闭")
   });
-}).listen(8080)
+}).listen(11881)
 
 // 分发方法
 const broadcast = (server, data) => {
@@ -90,4 +91,4 @@ const findConn = (server, uid) => {
 const showConnections = (server, info) => {
   console.log(server.connections)
 }
-console.log('This websocket-server is running at localhost:' + 8080)
+console.log('This websocket-server is running at localhost:' + 11881)

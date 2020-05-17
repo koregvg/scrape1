@@ -102,6 +102,7 @@ const wss = new WebSocket.Server({
 
 wss.on('connection', function connection(ws, req) {
   const ip = req.socket.remoteAddress;
+  console.log(req.socket)
   console.log(ip)
 });
 

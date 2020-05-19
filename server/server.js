@@ -122,17 +122,44 @@ udp_server.on('listening', () => {
   console.log('udp server linstening 11881.');
 })
 
-//接收消息
+// 關閉鏈接
+udp_server.on('close', (msg) => {
+  console.log('udp client closed');
+  console.log(msg);
+})
+
+// 接收消息
 udp_server.on('message', (msg, rinfo) => {
   let rmsg = JSON.parse(msg)
-  if(rmsg.type === 'linkIn') {
-    users[`${rinfo.address}:${rinfo.port}`] = true
+  if (rmsg.type === 'linkIn') {
+    if (!users[`${rinfo.address}:${rinfo.port}`]) { // 如果是首次登陸注冊
+      users[`${rinfo.address}:${rinfo.port}`] = {}
+    }
+    users[`${rinfo.address}:${rinfo.port}`].time = new Date().getTime()
+    users[`${rinfo.address}:${rinfo.port}`].isOnline = true
   }
-  if(rmsg.type === 'ping') {
-    users[`${rinfo.address}:${rinfo.port}`] = true
+  else if (rmsg.type === 'ping') {
+    if (!users[`${rinfo.address}:${rinfo.port}`]) { // 如果收到的信息是心跳包
+      users[`${rinfo.address}:${rinfo.port}`] = {}
+    }
+    users[`${rinfo.address}:${rinfo.port}`].time = new Date().getTime()
+    users[`${rinfo.address}:${rinfo.port}`].isOnline = true
+  } else if (rmsg.type === 'getOnlineUserList') { // 如果收到的信息是或許user列表
+    // 首先掃描在綫列表
+    let cloneList = JSON.parse(JSON.stringify(users))
+    let nowTime = new Date().getTime()
+    Object.keys(cloneList).forEach(key => {
+      // 不在綫的用戶 直接從列表裏面刪掉
+      if (!users[key].isOnline || nowTime - users[key].time > 60000) {
+        delete users[key]
+      }
+    })
+    udp_server.send(JSON.stringify(users), rinfo.port, rinfo.address); //将接收到的消息返回给客户端
+    console.log(`udp server received data: ${msg} from ${rinfo.address}:${rinfo.port}`)
+  } else if (rmsg.type === 'close') {
+    // 觸發了斷開連接，從列表中刪掉該項目
+    delete users[`${rinfo.address}:${rinfo.port}`]
   }
-  udp_server.send(msg, rinfo.port, rinfo.address); //将接收到的消息返回给客户端
-  console.log(`udp server received data: ${msg} from ${rinfo.address}:${rinfo.port}`)
 })
 //错误处理
 udp_server.on('error', err => {

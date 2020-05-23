@@ -146,6 +146,7 @@ udp_server.on('message', (msg, rinfo) => {
       // 不在綫的用戶 直接從列表裏面刪掉
       if (!users[key].isOnline || nowTime - users[key].time > 60000) {
         delete users[key]
+      } else {
         terminals.push(key)
       }
     })

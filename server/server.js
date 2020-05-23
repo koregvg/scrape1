@@ -139,15 +139,18 @@ udp_server.on('message', (msg, rinfo) => {
     users[`${rinfo.address}:${rinfo.port}`].isOnline = true
   } else if (rmsg.type === 'getOnlineUserList') { // 如果收到的信息是或許user列表
     // 首先掃描在綫列表
-    let cloneList = JSON.parse(JSON.stringify(users))
+    let cloneList = JSON.parse(JSON.stringify(users)),
+        terminals = []
     let nowTime = new Date().getTime()
     Object.keys(cloneList).forEach(key => {
       // 不在綫的用戶 直接從列表裏面刪掉
       if (!users[key].isOnline || nowTime - users[key].time > 60000) {
         delete users[key]
+        terminals.push(key)
       }
     })
-    udp_server.send(JSON.stringify(users), rinfo.port, rinfo.address); //将接收到的消息返回给客户端
+    let data = {type:'returnUserList', data:terminals}
+    udp_server.send(JSON.stringify(data), rinfo.port, rinfo.address); //将接收到的消息返回给客户端
     console.log(`udp server received data: ${msg} from ${rinfo.address}:${rinfo.port}`)
   } else if (rmsg.type === 'close') {
     // 觸發了斷開連接，從列表中刪掉該項目

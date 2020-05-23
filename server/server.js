@@ -131,15 +131,8 @@ udp_server.on('close', (msg) => {
 // 接收消息
 udp_server.on('message', (msg, rinfo) => {
   let rmsg = JSON.parse(msg)
-  if (rmsg.type === 'linkIn') {
+  if (rmsg.type === 'linkIn' || rmsg.type === 'ping') {
     if (!users[`${rinfo.address}:${rinfo.port}`]) { // 如果是首次登陸注冊
-      users[`${rinfo.address}:${rinfo.port}`] = {}
-    }
-    users[`${rinfo.address}:${rinfo.port}`].time = new Date().getTime()
-    users[`${rinfo.address}:${rinfo.port}`].isOnline = true
-  }
-  else if (rmsg.type === 'ping') {
-    if (!users[`${rinfo.address}:${rinfo.port}`]) { // 如果收到的信息是心跳包
       users[`${rinfo.address}:${rinfo.port}`] = {}
     }
     users[`${rinfo.address}:${rinfo.port}`].time = new Date().getTime()
@@ -160,6 +153,7 @@ udp_server.on('message', (msg, rinfo) => {
     // 觸發了斷開連接，從列表中刪掉該項目
     delete users[`${rinfo.address}:${rinfo.port}`]
   }
+  console.log(`udp server received data: ${msg} from ${rinfo.address}:${rinfo.port}`)
 })
 //错误处理
 udp_server.on('error', err => {

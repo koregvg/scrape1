@@ -149,7 +149,7 @@ udp_server.on('message', (msg, rinfo) => {
         terminals.push(key)
       }
     })
-    let data = {type:'returnUserList', data:terminals}
+    let data = {type:'returnUserList', data:{terminals}}
     udp_server.send(JSON.stringify(data), rinfo.port, rinfo.address); //将接收到的消息返回给客户端
     console.log(`udp server received data: ${msg} from ${rinfo.address}:${rinfo.port}`)
   } else if (rmsg.type === 'close') {
